@@ -43,6 +43,19 @@ function isNested(filter) {
   return nested
 }
 
+<<<<<<< Updated upstream
+=======
+const requestMapRender = () => {
+  // Required to force rendering of the 3D map after drawing is cleared.
+  wreqr.vent.trigger('map:requestRender')
+}
+
+const turnOffDrawing = () => {
+  wreqr.vent.trigger('search:drawend', store.get('content').get('drawingModel'))
+  requestMapRender()
+}
+
+>>>>>>> Stashed changes
 function getMatchTypeAttribute() {
   return metacardDefinitions.metacardTypes[properties.basicSearchMatchType]
     ? properties.basicSearchMatchType
@@ -414,6 +427,11 @@ module.exports = Marionette.LayoutView.extend({
     if (this.filter.anyGeo) {
       currentValue = this.filter.anyGeo[0]
     }
+    const currentView = this.basicLocationSpecific.currentView
+    if (currentView && currentView.model) {
+      this.stopListening(currentView.model)
+    }
+
     this.basicLocationSpecific.show(
       new PropertyView({
         model: new Property({
@@ -422,6 +440,12 @@ module.exports = Marionette.LayoutView.extend({
           type: 'LOCATION',
         }),
       })
+    )
+
+    this.listenTo(
+      this.basicLocationSpecific.currentView.model,
+      'change:shape',
+      requestMapRender
     )
   },
   handleTypeValue() {

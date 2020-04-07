@@ -17,6 +17,7 @@
 
 const Cesium = require('cesium')
 const CommonLayerController = require('./common.layerCollection.controller.js')
+const wreqr = require('../wreqr.js')
 const properties = require('../properties.js')
 import { addLayer, shiftLayers, getShift } from './cesium.layer-ordering'
 import _ from 'underscore'
@@ -42,6 +43,7 @@ const Controller = CommonLayerController.extend({
   initialize() {
     // there is no automatic chaining of initialize.
     CommonLayerController.prototype.initialize.apply(this, arguments)
+    this.listenTo(wreqr.vent, 'map:requestRender', this.requestRender)
   },
   makeMap(options) {
     // must create cesium map after containing DOM is attached.
@@ -118,6 +120,11 @@ const Controller = CommonLayerController.extend({
     if (this.isMapCreated) {
       this.map.destroy()
       this.map = null
+    }
+  },
+  requestRender() {
+    if (this.isMapCreated) {
+      this.map.scene.requestRender()
     }
   },
   setAlpha(model) {

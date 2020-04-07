@@ -108,6 +108,10 @@ module.exports = Backbone.Model.extend({
     currentValue.sort()
     switch (this.getCalculatedType()) {
       case 'location':
+        const currentShape = currentValue[0].mode
+        if (currentShape !== this.get('shape')) {
+          this.set('shape', currentShape)
+        }
         return (
           JSON.stringify(this.getInitialValue()) !==
             JSON.stringify(currentValue) &&
